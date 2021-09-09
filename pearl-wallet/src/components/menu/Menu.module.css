@@ -1,0 +1,28 @@
+.nav {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.ul {
+    display: inline-flex;
+    /* font-variant: all-small-caps; */
+} 
+
+.li {
+    display: flow-root;
+    padding: 8px 35px;
+}
+
+.span {
+    padding: 9px 35px 8px;
+    width: 100%;
+    margin: -35px;
+}
+
+.a, a:hover {
+    text-decoration: none;
+}
+
+a:hover{
+    opacity: 90%;
+}
