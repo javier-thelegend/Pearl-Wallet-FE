@@ -1,0 +1,19 @@
+.account-card {
+    width: 33%;
+    text-align: center;
+    /* margin: 0 auto; */
+}
+
+.account-link-button {
+    margin-left: 5px;
+}
+
+.account-button {
+    margin-bottom: 12px;
+    margin-left: 5px;
+    position: relative;
+}
+
+.account-button-new {
+    width: 25%;
+}

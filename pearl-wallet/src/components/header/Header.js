@@ -10,7 +10,7 @@ const Header = (props) => {
     return (
         <Navbar>
             <Container>
-                <Navbar.Brand href="#home">Pearl Wallet</Navbar.Brand>
+                <Navbar.Brand href="/">Pearl Wallet</Navbar.Brand>
                 {/* <Navbar.Toggle/> */}
                 <Navbar.Collapse className="justify-content-end">
                 <Menu/>
