@@ -18,7 +18,7 @@ const AccountChart = () => {
         'Dec'
     ];
 
-    const dataValues = (months) => {
+    const dataValues = () => {
         let l = [];
         let d = months.length - (new Date().getMonth() + 1); //To calculate till current month
         for(let i = 0 ; i < months.length - d ; i++){
@@ -32,7 +32,7 @@ const AccountChart = () => {
         labels: months,
         datasets: [{
                 label: 'Average Balance ($)',
-                data: dataValues(months),
+                data: dataValues(), //Sin parentesis retorna la funcion, con parentesis el resultado de la funcion
                 fill: false,
                 backgroundColor: 'blue',
                 borderColor: 'blue'

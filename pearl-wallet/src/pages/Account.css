@@ -1,5 +1,4 @@
 .account-card {
-    width: 33%;
     text-align: center;
     /* margin: 0 auto; */
 }
@@ -15,5 +14,5 @@
 }
 
 .account-button-new {
-    width: 25%;
+    width: 75%;
 }
