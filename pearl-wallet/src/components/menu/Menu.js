@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 import MenuCss from './Menu.module.css';
 
-const colorList = ['blue', 'orange', 'green', 'red'];
+const colorList = ['green', 'orange', 'red', 'blue'];
 const spanSize = 14;
 const spanBgColor = {backgroundColor: 'white'};
 
@@ -22,7 +22,7 @@ const Menu = () => {
                 </li>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[1]}}>
                     {/* Link used to Redirect Pages */}
-                    <Link to="/transfer" className={MenuCss.a} style={{color: colorList[1]}}>
+                    <Link to="/transfer/new" className={MenuCss.a} style={{color: colorList[1]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
                             <Icon.Laptop color={colorList[1]} size={spanSize}/> Transfers
                         </span>
@@ -30,20 +30,19 @@ const Menu = () => {
                 </li>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[2]}}>
                     {/* Link used to Redirect Pages */}
-                    <Link to="/income" className={MenuCss.a} style={{color: colorList[2]}}>
+                    <Link to="/transaction" className={MenuCss.a} style={{color: colorList[2]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
-                            <Icon.Download color={colorList[2]} size={spanSize}/> Income
+                            <Icon.ArrowDownUp color={colorList[2]} size={spanSize}/> Income / Expenses
                         </span>
                     </Link>
                 </li>
-                <li className={MenuCss.li} style={{backgroundColor: colorList[3]}}>
-                    {/* Link used to Redirect Pages */}
-                    <Link to="/expenses" className={MenuCss.a} style={{color: colorList[3]}}>
+                {/* <li className={MenuCss.li} style={{backgroundColor: colorList[3]}}>
+                    <Link to="/history" className={MenuCss.a} style={{color: colorList[3]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
-                            <Icon.Upload color={colorList[3]} size={spanSize}/> Expenses
+                            <Icon.FileEarmarkMedicalFill color={colorList[3]} size={spanSize}/> History
                         </span>
                     </Link>
-                </li>
+                </li> */}
             </ul>
         </nav>
     )

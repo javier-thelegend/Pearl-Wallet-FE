@@ -25,7 +25,7 @@ const Header = (props) => {
             await authContext.logout()
             
             // Moving to register page
-            history.push('/register')
+            history.push('/login')
         } catch {
             setError("Not possible to Log Out")
         }

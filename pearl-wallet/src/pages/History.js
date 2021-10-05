@@ -3,12 +3,12 @@ import Container from 'react-bootstrap/esm/Container'
 
 import '../components/main/Main.css';
 
-const Expenses = () => {
+const History = () => {
     return (
         <Container>
-            <main className="main">Expenses</main>
+            <main className="main">History</main>
         </Container>
     )
 }
 
-export default Expenses
+export default History

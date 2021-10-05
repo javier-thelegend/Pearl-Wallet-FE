@@ -13,6 +13,8 @@ import Alert from 'react-bootstrap/Alert'
 
 import AuthContext from '../context/auth-context'
 
+import './Register.css'
+
 const Register = () => {
     //Error variable
     const [error, setError] = useState('')
@@ -60,8 +62,12 @@ const Register = () => {
         setDisabledSubmit(false)
     }
 
+    const handleCancel = () => {
+        history.push('/login')
+    }
+
     return (
-        <Container className="main">
+        <Container className="main register-card">
             <Card className="account-card">
 
                 {/* Creating the form */}
@@ -81,7 +87,7 @@ const Register = () => {
                                 <Form.Label column sm="5">
                                 Email
                                 </Form.Label>
-                                <Col sm="3">
+                                <Col sm="5">
                                     <Form.Control type="email" ref={emailRef} required placeholder="email@example.com" />
                                 </Col>
                             </Form.Group>
@@ -90,7 +96,7 @@ const Register = () => {
                                 <Form.Label column sm="5">
                                 Password
                                 </Form.Label>
-                                <Col sm="3">
+                                <Col sm="5">
                                     <Form.Control type="password" ref={passwordRef} required placeholder="Password" />
                                 </Col>
                             </Form.Group>
@@ -99,7 +105,7 @@ const Register = () => {
                                 <Form.Label column sm="5">
                                 Confirm Password
                                 </Form.Label>
-                                <Col sm="3">
+                                <Col sm="5">
                                     <Form.Control type="password" ref={confirmPasswordRef} required placeholder="Confirm Password" />
                                 </Col>
                             </Form.Group>
@@ -114,7 +120,8 @@ const Register = () => {
                             <Icon.Save color='white' size={16}/> Save
                         </Button>
                         <Button className="account-link-button" 
-                            variant="primary">
+                            variant="primary"
+                            onClick={handleCancel}>
                             <Icon.XCircle color='white' size={16}/> Cancel
                         </Button>
                     </Card.Footer>

@@ -2,5 +2,6 @@ body {
   font-variant: all-small-caps;
   background-color: white;
   background-image: url("./images/gray-pattern.png");
-  background-position: 10% 70%;
+  /* background-position: 10% 70%; */
+  background-position: 10% 55%;
 }

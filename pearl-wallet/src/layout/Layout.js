@@ -34,7 +34,7 @@ const Layout = ({exact, path, component:Component, ...props}) => {
                     if(authContext.currentUser) return userPages;
 
                     // If not logged redirect to register   
-                    return <Redirect to='register'/>
+                    return <Redirect to='login'/>
                 } 
             } 
         />

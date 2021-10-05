@@ -5,6 +5,7 @@ import * as Icon from 'react-bootstrap-icons';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { useHistory } from 'react-router-dom'
 
 import '../components/main/Main.css';
 import './Account.css';
@@ -14,12 +15,19 @@ import AccountTable from '../components/accountTable/AccountTable';
 const spanSize = 15;
 
 const Account = () => {
+
+    const history = useHistory()
+
+    const handleNewAccount = () => {
+        history.push('/account/new')
+    }
+
     return (
         <Container className="main">
             <Row>
                 <Col sm={4}>
                     {/* Add New Account */}
-                    <Button className="account-button account-button-new" variant="primary" title='Add a New Account'>
+                    <Button className="account-button account-button-new" variant="primary" title='Add a New Account' onClick={handleNewAccount}>
                         <Icon.FileEarmark color='white' size={spanSize}/> New Account
                     </Button>
 

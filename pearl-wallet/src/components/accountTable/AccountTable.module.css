@@ -62,3 +62,7 @@ th.asc {
 .pageController {
   margin-left: 5px;
 }
+
+.button-new-in-filter {
+  margin: 0;
+}
