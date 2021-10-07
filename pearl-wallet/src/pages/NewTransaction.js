@@ -31,7 +31,7 @@ const Transaction = () => {
     }
 
     const handleCancel = () => {
-        history.push('/transaction')
+        history.goBack();
     }
 
     return (

@@ -14,15 +14,15 @@ const Menu = () => {
             <ul className={MenuCss.ul}>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[0]}}>
                     {/* Link used to Redirect Pages */}
-                    <Link to="/account" className={MenuCss.a} style={{color: colorList[0]}}>
+                    <Link to="/" className={MenuCss.a} style={{color: colorList[0]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
-                            <Icon.Wallet2 color={colorList[0]} size={spanSize}/> Accounts
+                            <Icon.Wallet2 color={colorList[0]} size={spanSize}/> Dashboard
                         </span>
                     </Link>
                 </li>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[1]}}>
                     {/* Link used to Redirect Pages */}
-                    <Link to="/transfer/new" className={MenuCss.a} style={{color: colorList[1]}}>
+                    <Link to="/transfer" className={MenuCss.a} style={{color: colorList[1]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
                             <Icon.Laptop color={colorList[1]} size={spanSize}/> Transfers
                         </span>
@@ -32,7 +32,7 @@ const Menu = () => {
                     {/* Link used to Redirect Pages */}
                     <Link to="/transaction" className={MenuCss.a} style={{color: colorList[2]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
-                            <Icon.ArrowDownUp color={colorList[2]} size={spanSize}/> Income / Expenses
+                            <Icon.ArrowDownUp color={colorList[2]} size={spanSize}/> History
                         </span>
                     </Link>
                 </li>

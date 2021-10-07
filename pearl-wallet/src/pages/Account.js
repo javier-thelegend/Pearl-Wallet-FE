@@ -1,4 +1,5 @@
 import React from 'react'
+import { useState } from 'react'
 import Container from 'react-bootstrap/esm/Container';
 import Button from 'react-bootstrap/Button';
 import * as Icon from 'react-bootstrap-icons';
@@ -20,6 +21,14 @@ const Account = () => {
 
     const handleNewAccount = () => {
         history.push('/account/new')
+    }
+
+    const handleNewFundsTransfer = () => {
+        history.push('/transfer/new')
+    }
+
+    const handleNewTransaction = () => {
+        history.push('/transaction/new')
     }
 
     return (
@@ -53,9 +62,12 @@ const Account = () => {
                             <Button className="account-link-button" variant="default">
                                 <Icon.Trash color='black' size={spanSize}/> Delete
                             </Button>
-                            {/* <Button className="account-link-button" variant="default">
-                                <Icon.ArrowLeftRight color='black' size={spanSize}/> Movements
-                            </Button> */}
+                            <Button className="account-link-button"  variant="default" onClick={handleNewFundsTransfer}>
+                                <Icon.Laptop color='black' size={spanSize}/> Transfer
+                            </Button>
+                            <Button className="account-link-button" variant="default" onClick={handleNewTransaction}>
+                                <Icon.ArrowDownUp color='black' size={spanSize}/> Income / Expenses
+                            </Button>
                         </Card.Body>
                         <Card.Footer className="text-muted">Banco Agricola - Saving Account</Card.Footer>
                     </Card>

@@ -7,13 +7,13 @@ import * as Icon from 'react-bootstrap-icons';
 import Button from 'react-bootstrap/Button';
 
 import AccountTableCss from '../accountTable/AccountTable.module.css';
-import useColumns from "../../hooks/useTransactionColumns";
-import useRows from "../../hooks/useTransactionRows";
+import useColumns from "../../hooks/useFundsTransferColumns";
+import useRows from "../../hooks/useFundsTransferRows";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 
-function TransactionFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
+function FundsTransferFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
   const totalMovements = preGlobalFilteredRows.length;
   const [value, setValue] = useState(globalFilter);
 
@@ -34,14 +34,14 @@ function TransactionFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilte
         size={40}
         value={value || ""}
         onChange={handleInputChange}
-        placeholder={`${totalMovements} Income / Expenses Movementes`}
+        placeholder={`${totalMovements} Funds Transfer Movementes`}
         style={{marginRight: '1%'}}
       />
     </span>
   );
 }
 
-export default function TransactionTable() {
+export default function FundsTransferTable() {
   const columns = useColumns();
   const data = useRows();
   const table = useTable({
@@ -78,7 +78,7 @@ export default function TransactionTable() {
 
   const history = useHistory()
   const handleNewIncomeExpenses = () => {
-    history.push('/transaction/new')
+    history.push('/transfer/new')
   }
 
   return (
@@ -90,12 +90,12 @@ export default function TransactionTable() {
             <th className={AccountTableCss.filter} colSpan={5}>
               <Row>
                 <Col style={{textAlign: 'left'}}>
-                  <Button style={{marginTop: '-5px'}} className="button-new-in-filter" variant="default" title='Add a New Income / Expenses' onClick={handleNewIncomeExpenses}>
-                      <Icon.FileEarmark color='black' size={15}/> New Income / Expenses
+                  <Button style={{marginTop: '-5px'}} className="button-new-in-filter" variant="default" title='Add a New Funds Transfer' onClick={handleNewIncomeExpenses}>
+                      <Icon.FileEarmark color='black' size={15}/> New Funds Transfer
                   </Button>
                 </Col>
                 <Col>
-                  <TransactionFilter
+                  <FundsTransferFilter
                       preGlobalFilteredRows={preGlobalFilteredRows}
                       globalFilter={globalFilter}
                       setGlobalFilter={setGlobalFilter}

@@ -30,7 +30,7 @@ const NewFundsTransfer = () => {
     }
 
     const handleCancel = () => {
-        history.push('/')
+        history.goBack();
     }
 
     const today = new Date();

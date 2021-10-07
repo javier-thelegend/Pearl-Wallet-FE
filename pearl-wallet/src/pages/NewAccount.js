@@ -22,6 +22,7 @@ const Account = () => {
     const bankRef = useRef()
     const balanceRef = useRef()
     const typeRef = useRef()
+    const currencyRef = useRef()
 
     const handleSubmit = async (e) => {
         //Stop default implementation of event
@@ -29,7 +30,7 @@ const Account = () => {
     }
 
     const handleCancel = () => {
-        history.push('/account')
+        history.goBack();
     }
 
     return (
@@ -71,6 +72,18 @@ const Account = () => {
                                         <Form.Check.Input type='radio' name='type' ref={typeRef}/>
                                         <Form.Check.Label>Current Account</Form.Check.Label>                                    
                                     </Form.Check>
+                                </Col>
+                            </Form.Group>
+
+                            <Form.Group as={Row} className="mb-3" id="currency">
+                                <Form.Label column sm="5">
+                                Currency
+                                </Form.Label>
+                                <Col sm="5">
+                                    <Form.Select ref={currencyRef} required>
+                                        <option>USD</option>
+                                        <option>EUR</option>
+                                    </Form.Select>
                                 </Col>
                             </Form.Group>
 
