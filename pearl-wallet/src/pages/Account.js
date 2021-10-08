@@ -19,16 +19,21 @@ const Account = () => {
 
     const history = useHistory()
 
-    const handleNewAccount = () => {
-        history.push('/account/new')
+    const handleLoadPage = (e) => {
+        if(e.target.value != '/account/new') localStorage.setItem("account","100119");
+        history.push(e.target.value);
     }
 
-    const handleNewFundsTransfer = () => {
-        history.push('/transfer/new')
+    const handleEditAccount = (e) => {
+        localStorage.setItem("account","100119");
+        handleLoadPage(e);
     }
 
-    const handleNewTransaction = () => {
-        history.push('/transaction/new')
+    const handleDeleteAccount = (e) => {
+        let c = window.confirm("Do you want to delete this account?");
+        if(c){
+            alert("Deleted");
+        }
     }
 
     return (
@@ -36,7 +41,8 @@ const Account = () => {
             <Row>
                 <Col sm={4}>
                     {/* Add New Account */}
-                    <Button className="account-button account-button-new" variant="primary" title='Add a New Account' onClick={handleNewAccount}>
+                    <Button className="account-button account-button-new" variant="primary" title='Add a New Account' 
+                        onClick={handleLoadPage} value='/account/new'>
                         <Icon.FileEarmark color='white' size={spanSize}/> New Account
                     </Button>
 
@@ -56,16 +62,20 @@ const Account = () => {
                         <Card.Body>
                             <Card.Title>Account Balance</Card.Title>
                             <Card.Text>$ 3,750.00</Card.Text>
-                            <Button className="account-link-button"  variant="default">
+                            <Button className="account-link-button"  variant="default"
+                                onClick={handleEditAccount} value='/account/new'>
                                 <Icon.Pen color='black' size={spanSize}/> Edit
                             </Button>
-                            <Button className="account-link-button" variant="default">
+                            <Button className="account-link-button" variant="default"
+                                onClick={handleDeleteAccount}>
                                 <Icon.Trash color='black' size={spanSize}/> Delete
                             </Button>
-                            <Button className="account-link-button"  variant="default" onClick={handleNewFundsTransfer}>
+                            <Button className="account-link-button"  variant="default" 
+                                onClick={handleLoadPage} value='/transfer/new'>
                                 <Icon.Laptop color='black' size={spanSize}/> Transfer
                             </Button>
-                            <Button className="account-link-button" variant="default" onClick={handleNewTransaction}>
+                            <Button className="account-link-button" variant="default" 
+                                onClick={handleLoadPage} value='/transaction/new'>
                                 <Icon.ArrowDownUp color='black' size={spanSize}/> Income / Expenses
                             </Button>
                         </Card.Body>

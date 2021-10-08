@@ -17,6 +17,7 @@ const NewFundsTransfer = () => {
     const [error, setError] = useState('')
     const history = useHistory()
     const [disabledSubmit, setDisabledSubmit] = useState(false)
+    const account = localStorage.getItem('account')
 
     const accountOriginRef = useRef()
     const accountDestinyRef = useRef()
@@ -30,6 +31,7 @@ const NewFundsTransfer = () => {
     }
 
     const handleCancel = () => {
+        localStorage.removeItem("account")
         history.goBack();
     }
 
@@ -67,11 +69,14 @@ const NewFundsTransfer = () => {
                                 Origin Account
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Select ref={accountOriginRef} required>
-                                        <option>1000023654</option>
-                                        <option>1077845522</option>
-                                        <option>0000245587</option>
-                                    </Form.Select>
+                                    {account && <Form.Control type="text" ref={accountOriginRef} value={account} disabled required />}
+                                    {!account && 
+                                        <Form.Select ref={accountOriginRef} required>
+                                            <option>1000023654</option>
+                                            <option>1077845522</option>
+                                            <option>0000245587</option>
+                                        </Form.Select>
+                                    }
                                 </Col>
                             </Form.Group>
 

@@ -17,6 +17,7 @@ const Account = () => {
     const [error, setError] = useState('')
     const history = useHistory()
     const [disabledSubmit, setDisabledSubmit] = useState(false)
+    const account = localStorage.getItem('account')
 
     const accountRef = useRef()
     const bankRef = useRef()
@@ -30,7 +31,8 @@ const Account = () => {
     }
 
     const handleCancel = () => {
-        history.goBack();
+        localStorage.removeItem("account")
+        history.goBack()
     }
 
     return (
@@ -55,7 +57,8 @@ const Account = () => {
                                 Account Num
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Control type="text" ref={accountRef} required placeholder="10000002256549" />
+                                    {account && <Form.Control type="text" ref={accountRef} value={account} disabled required />}
+                                    {!account && <Form.Control type="text" ref={accountRef} required placeholder="10000002256549" />}
                                 </Col>
                             </Form.Group>
 
