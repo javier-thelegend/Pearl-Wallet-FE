@@ -1,4 +1,4 @@
-import { useTable, useSortBy } from "react-table";
+import { useTable, useSortBy, useFilters } from "react-table";
 import { useGlobalFilter, useAsyncDebounce } from "react-table";
 import { usePagination } from "react-table";
 import { useState } from "react";
@@ -51,7 +51,7 @@ export default function TransactionTable() {
         pageSize: 10,
         pageIndex: 0
       }
-    }, 
+    },
     useGlobalFilter,  
     useSortBy,
     usePagination
