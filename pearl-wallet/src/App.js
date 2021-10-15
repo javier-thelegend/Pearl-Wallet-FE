@@ -1,7 +1,6 @@
 import { Switch, Route } from "react-router-dom";
 
 import './App.css';
-import Main from "./components/main/Main";
 import Account from './pages/Account';
 import NewAccount from './pages/NewAccount';
 import FundsTransfer from './pages/FundsTransfer';

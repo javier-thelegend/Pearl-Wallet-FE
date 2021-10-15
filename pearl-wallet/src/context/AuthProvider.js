@@ -2,11 +2,12 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import AuthContext from './auth-context'
 import { auth } from '../services/firebase'
-import { createUserWithEmailAndPassword, 
+import { 
+        createUserWithEmailAndPassword, 
         onAuthStateChanged,
         signInWithEmailAndPassword,
         signOut 
-} from 'firebase/auth'
+    } from 'firebase/auth'
 
 const AuthProvider = (props) => {
     //CurrentUser
@@ -14,12 +15,40 @@ const AuthProvider = (props) => {
 
     //Register
     const register = (email, password) => {
-        return createUserWithEmailAndPassword(auth, email, password)
+        return new Promise(async (resolve, reject) => {
+            try {
+              const credentials = await createUserWithEmailAndPassword(auth, email, password);
+              const idToken = await credentials.user.getIdToken();
+              console.log(idToken);
+            //   console.log(`${process.env.REACT_APP_BACKEND_BASE_URL}`);
+              const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/user`, {
+                                        method: 'POST',
+                                        headers: {
+                                          'Authorization': `Bearer ${idToken}`
+                                        }
+                                      });
+              const data = await response.json();
+            //   console.log(data);
+              resolve(data);
+            } catch(e) {
+              reject(e);
+            }
+        });
     }
 
     //Login
     const login = (email, password) => {
-        return signInWithEmailAndPassword(auth, email, password)
+        // return signInWithEmailAndPassword(auth, email, password)
+        return new Promise(async (resolve, reject) => {
+          try {
+            const credentials = await signInWithEmailAndPassword(auth, email, password);
+            const idToken = await credentials.user.getIdToken();
+            console.log(idToken);
+            resolve();
+          } catch(e) {
+            reject(e);
+          }
+      });
     }
 
     //Logout
