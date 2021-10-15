@@ -38,17 +38,7 @@ const AuthProvider = (props) => {
 
     //Login
     const login = (email, password) => {
-        // return signInWithEmailAndPassword(auth, email, password)
-        return new Promise(async (resolve, reject) => {
-          try {
-            const credentials = await signInWithEmailAndPassword(auth, email, password);
-            const idToken = await credentials.user.getIdToken();
-            console.log(idToken);
-            resolve();
-          } catch(e) {
-            reject(e);
-          }
-      });
+        return signInWithEmailAndPassword(auth, email, password)
     }
 
     //Logout
