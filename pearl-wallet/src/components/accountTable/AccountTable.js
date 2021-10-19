@@ -38,9 +38,9 @@ function AccountFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter })
   );
 }
 
-export default function AccountTable() {
+export default function AccountTable({account}) {
   const columns = useColumns();
-  const data = useRows();
+  const data = useRows(account);
   const table = useTable({
       columns, 
       data, 

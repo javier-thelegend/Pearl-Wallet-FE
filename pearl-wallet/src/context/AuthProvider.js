@@ -11,7 +11,8 @@ import {
 
 const AuthProvider = (props) => {
     //CurrentUser
-    const [currentUser, setCurrentUser] = useState({})
+    const [currentUser, setCurrentUser] = useState({});
+    const [loadingUserInfo, setLoadingUserInfo] = useState(true);
 
     //Register
     const register = (email, password) => {
@@ -43,13 +44,16 @@ const AuthProvider = (props) => {
 
     //Logout
     const logout = () => {
-        return signOut(auth)
+        //Clean all localStorage variables
+        localStorage.clear();
+        return signOut(auth);
     }
 
     //Authentication handled by Firebase
     useEffect(() => {
-        let unsubscriber = onAuthStateChanged(auth, (user) => {
-            setCurrentUser(user)
+        const unsubscriber = onAuthStateChanged(auth, (user) => {
+            setCurrentUser(user);
+            setLoadingUserInfo(false);
         })
         return unsubscriber
     }, [])
@@ -64,7 +68,7 @@ const AuthProvider = (props) => {
 
     return (
         <AuthContext.Provider value={authContext}>
-            {props.children}
+            {!loadingUserInfo && props.children}
         </AuthContext.Provider>
     )
 }

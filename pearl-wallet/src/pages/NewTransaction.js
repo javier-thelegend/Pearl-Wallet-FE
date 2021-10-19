@@ -1,6 +1,7 @@
 import React from 'react'
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
+import AuthContext from '../context/auth-context';
 
 import Container from 'react-bootstrap/esm/Container'
 import Card from 'react-bootstrap/Card'
@@ -16,25 +17,167 @@ import './Transaction.css'
 
 const Transaction = () => {
     const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
     const history = useHistory()
     const [disabledSubmit, setDisabledSubmit] = useState(false)
-    const account = localStorage.getItem('account')
+    const account = localStorage.getItem('account');
+    const balance = localStorage.getItem("balance");
+    const authContext = useContext(AuthContext);
+    const today = new Date();
 
+    //Field references
     const accountRef = useRef()
     const categoryRef = useRef()
     const amountRef = useRef()
-    const typeRef = useRef()
     const dateRef = useRef()
+
+    //Function to generate request
+    const createTransaction = async (requestBody) => {
+        // console.log('requestBody: ' + JSON.stringify(requestBody));
+        let idToken = await authContext.currentUser.getIdToken();
+        let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/transaction`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        let result = await response.json();
+        if(!result.valid){
+            setError("Error: " + result.message.column + " " + result.message.detail);
+        } else {
+            setSuccess(result.message);
+        }
+        setShow(true);
+        // console.log(result);
+    }
+
+    const updateBalanceAccount = async (requestBody) => {
+        // console.log('requestBody: ' + JSON.stringify(requestBody));
+        let idToken = await authContext.currentUser.getIdToken();
+        let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/account/${account}/balance`, {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        let result = await response.json();
+        if(!result.valid){
+            setError("Error: " + result.message.column + " " + result.message.detail);
+        }
+        setShow(true);
+        // console.log(result);
+    }
 
     const handleSubmit = async (e) => {
         //Stop default implementation of event
         e.preventDefault()
+
+        //Clean Error if exists
+        setError('');
+
+        //Disable button to avoid any new submit
+        setDisabledSubmit(true);
+
+        //Send request to create account
+        try{
+            let newBalance = transactionType == 14 ? parseFloat(balance) + parseFloat(amountRef.current.value) : parseFloat(balance) - parseFloat(amountRef.current.value);
+            let requestBody = {
+                transaction_type: transactionType,
+                category: categoryRef.current.value,
+                account: accountRef.current.value,
+                amount: amountRef.current.value,
+                reason: 'null',
+                balance: newBalance,
+                created_at: dateRef.current.value
+            };
+            await createTransaction(requestBody);
+            
+            requestBody = {
+                balance: newBalance
+            }
+            await updateBalanceAccount(requestBody);
+            localStorage.setItem("balance", newBalance);
+        }catch(e){
+            setError(e);
+            setShow(true);
+        }
+
+        //Enable button again
+        setDisabledSubmit(false);
+
+        //Clean variables
+        categoryRef.current.value = '';
+        amountRef.current.value = '';
+        dateRef.current.value = '';
     }
 
     const handleCancel = () => {
-        localStorage.removeItem("account")
         history.goBack();
     }
+
+    //To Get AccountType Value
+    const [transactionType, setTransactionType] = useState();
+
+    //Fill Type RadioButton Options
+    const transactionTypesCatalogId = 13;
+    const [transactionTypes, setTransactionTypes] = useState([]);
+    useEffect(() => {
+        const getTransactionTypes = async () => {
+            let idToken = await authContext.currentUser.getIdToken();
+            let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/catalog/${transactionTypesCatalogId}/detail`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${idToken}`
+                }
+              });
+            let transactionTypes = await response.json();
+            setTransactionTypes(transactionTypes.data);
+            // console.log(accountTypes);
+        }
+        getTransactionTypes();
+    }, []);
+    const transactionTypesOptions = transactionTypes.map((rb) => (
+        <Form.Check inline type='radio'>
+            <Form.Check.Input type='radio' name='type' required onChange={() => setTransactionType(rb.id)}/>
+            <Form.Check.Label>&nbsp;{rb.description}</Form.Check.Label>
+        </Form.Check>
+    ));
+
+    //Fill Category Dropdown Options
+    const [categories, setCategories] = useState([]);
+    useEffect(() => {
+        // console.log(transactionType);
+        const getCategories = async () => {
+            if(transactionType){
+                let idToken = await authContext.currentUser.getIdToken();
+                let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/catalog/${transactionType}/detail`, {
+                    method: 'GET',
+                    headers: {
+                    'Authorization': `Bearer ${idToken}`
+                    }
+                });
+                let categories = await response.json();
+                setCategories(categories.data);
+                // console.log(categories);
+            }
+        }
+        getCategories();
+    }, [transactionType]);
+    const categoriesOptions = categories.map((option) => <option key={option.id} value={option.id}>{option.description}</option>);
+
+    //Hook to show/hide alert success/error
+    const [show, setShow] = useState(false);
+    useEffect(() => {
+        setTimeout(function (){
+            setShow(false);
+        },5000);
+    }, [error, success])
 
     return (
         <Container className="main">
@@ -50,7 +193,10 @@ const Transaction = () => {
                         <Card.Title>Complete the Form</Card.Title>
                         
                         {/* Show error if exists */}
-                        {error && <Alert variant="warning">{error}</Alert>}
+                        {error && <Alert variant="danger" show={show} >{error}</Alert>}
+
+                        {/* Show Success Message if exists */}
+                        {success && <Alert variant="primary" show={show}>{success}</Alert>}
 
                             {/* Input Fields */}
                             <Form.Group as={Row} className="mb-3" id="account">
@@ -74,14 +220,7 @@ const Transaction = () => {
                                 Type
                                 </Form.Label>
                                 <Col sm="5" style={{textAlign: 'initial', marginTop: '1%'}}>
-                                    <Form.Check inline type='radio'>
-                                        <Form.Check.Input type='radio' name='type' ref={typeRef}/>
-                                        <Form.Check.Label>Income</Form.Check.Label>                                    
-                                    </Form.Check>
-                                    <Form.Check inline type='radio'>
-                                        <Form.Check.Input type='radio' name='type' ref={typeRef}/>
-                                        <Form.Check.Label>Expenses</Form.Check.Label>                                    
-                                    </Form.Check>
+                                    {transactionTypesOptions}
                                 </Col>
                             </Form.Group>
 
@@ -90,16 +229,10 @@ const Transaction = () => {
                                 Category
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Select ref={categoryRef} required>
-                                        <option>Medicine</option>
-                                        <option>Grosery</option>
-                                        <option>Gasoline</option>
-                                        <option>Tax</option>
-                                        <option>Credit Card</option>
-                                        <option>Lending</option>
-                                        <option>Car Fee</option>
-                                        <option>Salary</option>
-                                    </Form.Select>
+                                    <Form.Control as='select' ref={categoryRef} required>
+                                        <option value=''>---  Select an Option  ---</option>
+                                        {categoriesOptions}
+                                    </Form.Control>
                                 </Col>
                             </Form.Group>
 
@@ -108,7 +241,7 @@ const Transaction = () => {
                                 Date
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Control type="date" ref={dateRef} max={new Date().getDate()} required />
+                                    <Form.Control type="date" ref={dateRef} max={today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate()} required />
                                 </Col>
                             </Form.Group>
 
@@ -117,7 +250,7 @@ const Transaction = () => {
                                 Amount
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Control type="number" ref={amountRef} required placeholder="99.99" />
+                                    <Form.Control type="number" ref={amountRef} required placeholder="9999.99" step='any' />
                                 </Col>
                             </Form.Group>
                     </Card.Body>

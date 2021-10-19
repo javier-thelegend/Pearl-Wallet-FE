@@ -4,17 +4,14 @@ export default function useColumns() {
     const columns = useMemo(() => [
         {
             Header: "Date",
-            accessor: "date"
-        },
-        {
-            Header: "Movement",
-            accessor: "movement"
-        },
-        {
-            Header: "Description",
-            accessor: "description"
-        },
-        {
+            accessor: "transaction_date"
+        }, {
+            Header: "Type",
+            accessor: "transaction_type"
+        }, {
+            Header: "Category",
+            accessor: "category"
+        }, {
             Header: "Amount",
             accessor: "amount"
         }, {

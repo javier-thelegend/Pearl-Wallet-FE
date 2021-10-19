@@ -1,6 +1,7 @@
 import React from 'react'
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef, useContext } from 'react'
 import { useHistory } from 'react-router-dom'
+import AuthContext from '../context/auth-context';
 
 import Container from 'react-bootstrap/esm/Container'
 import Card from 'react-bootstrap/Card'
@@ -15,25 +16,159 @@ import '../components/main/Main.css'
 
 const Account = () => {
     const [error, setError] = useState('')
+    const [success, setSuccess] = useState('')
     const history = useHistory()
     const [disabledSubmit, setDisabledSubmit] = useState(false)
     const account = localStorage.getItem('account')
+    const authContext = useContext(AuthContext);
 
+    //Field references
     const accountRef = useRef()
     const bankRef = useRef()
     const balanceRef = useRef()
-    const typeRef = useRef()
     const currencyRef = useRef()
+
+    //Function to generate request
+    const createAccount = async (requestBody) => {
+        // console.log('requestBody: ' + JSON.stringify(requestBody));
+        let idToken = await authContext.currentUser.getIdToken();
+        let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/account`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        let result = await response.json();
+        if(!result.valid){
+            setError("Error: " + result.message.column + " " + result.message.detail);
+        } else {
+            setSuccess(result.message);
+        }
+        setShow(true);
+        // console.log(result);
+    }
 
     const handleSubmit = async (e) => {
         //Stop default implementation of event
         e.preventDefault()
+        // console.log("Account Type: " + accountType);
+        // console.log("Currency: " + currencyRef.current.value);
+        // console.log("Bank: " + bankRef.current.value);
+
+        //Clean Error if exists
+        setError('');
+
+        //Disable button to avoid any new submit
+        setDisabledSubmit(true);
+
+        //Send request to create account
+        try{
+            let requestBody = {
+                account: accountRef.current.value,
+                accountType: accountType,
+                balance: balanceRef.current.value,
+                currency: currencyRef.current.value,
+                bank: bankRef.current.value
+            };
+            await createAccount(requestBody);
+        }catch(e){
+            setError(e);
+            setShow(true);
+        }
+
+        //Enable button again
+        setDisabledSubmit(false);
+
+        //Clean variables
+        // setAccountType(); //Trigger error intentionally 2nd creation
+        accountRef.current.value = '';
+        currencyRef.current.value = '';
+        bankRef.current.value = '';
+        balanceRef.current.value = '';
     }
 
     const handleCancel = () => {
         localStorage.removeItem("account")
         history.goBack()
     }
+
+    //To Get AccountType Value
+    const [accountType, setAccountType] = useState();
+
+    //Fill Account Type RadioButton Options
+    const accountTypesCatalogId = 1;
+    const [accountTypes, setAccountTypes] = useState([]);
+    useEffect(() => {
+        const getAccountTypes = async () => {
+            let idToken = await authContext.currentUser.getIdToken();
+            let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/catalog/${accountTypesCatalogId}/detail`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${idToken}`
+                }
+              });
+            let accountTypes = await response.json();
+            setAccountTypes(accountTypes.data);
+            // console.log(accountTypes);
+        }
+        getAccountTypes();
+    }, []);
+    const accountTypesOptions = accountTypes.map((rb) => (
+        <Form.Check inline type='radio'>
+            <Form.Check.Input type='radio' name='type' required onChange={() => setAccountType(rb.id)}/>
+            <Form.Check.Label>&nbsp;{rb.description}</Form.Check.Label>
+        </Form.Check>
+    ));
+
+    //Fill Currency Dropdown Options
+    const [currencies, setCurrencies] = useState([]);
+    useEffect(() => {
+        const getCurrencies = async () => {
+            let idToken = await authContext.currentUser.getIdToken();
+            let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/currency`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${idToken}`
+                }
+              });
+            let currencies = await response.json();
+            setCurrencies(currencies.data);
+            // console.log(currencies);
+        }
+        getCurrencies();
+    }, []);
+    const currenciesOptions = currencies.map((option) => <option key={option.id} value={option.id}>{option.iso_code}</option>);
+
+    //Fill Bank Dropdown Options
+    const bankCatalogId = 4;
+    const [banks, setBanks] = useState([]);
+    useEffect(() => {
+        const getBanks = async () => {
+            let idToken = await authContext.currentUser.getIdToken();
+            let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/catalog/${bankCatalogId}/detail`, {
+                method: 'GET',
+                headers: {
+                  'Authorization': `Bearer ${idToken}`
+                }
+              });
+            let banks = await response.json();
+            setBanks(banks.data);
+            // console.log(banks);
+        }
+        getBanks();
+    }, []);
+    const banksOptions = banks.map((option) => <option key={option.id} value={option.id}>{option.description}</option>);
+
+    //Hook to show/hide alert success/error
+    const [show, setShow] = useState(false);
+    useEffect(() => {
+        setTimeout(function (){
+            setShow(false);
+        },5000);
+    }, [error, success])
 
     return (
         <Container className="main">
@@ -49,7 +184,10 @@ const Account = () => {
                         <Card.Title>Complete the Form</Card.Title>
                         
                         {/* Show error if exists */}
-                        {error && <Alert variant="warning">{error}</Alert>}
+                        {error && <Alert variant="danger" show={show} >{error}</Alert>}
+
+                        {/* Show Success Message if exists */}
+                        {success && <Alert variant="primary" show={show}>{success}</Alert>}
 
                             {/* Input Fields */}
                             <Form.Group as={Row} className="mb-3" id="account">
@@ -67,14 +205,7 @@ const Account = () => {
                                 Type
                                 </Form.Label>
                                 <Col sm="5" style={{textAlign: 'initial', marginTop: '1%'}}>
-                                    <Form.Check inline type='radio'>
-                                        <Form.Check.Input type='radio' name='type' ref={typeRef}/>
-                                        <Form.Check.Label>Saving Account</Form.Check.Label>                                    
-                                    </Form.Check>
-                                    <Form.Check inline type='radio'>
-                                        <Form.Check.Input type='radio' name='type' ref={typeRef}/>
-                                        <Form.Check.Label>Current Account</Form.Check.Label>                                    
-                                    </Form.Check>
+                                    {accountTypesOptions}
                                 </Col>
                             </Form.Group>
 
@@ -83,10 +214,10 @@ const Account = () => {
                                 Currency
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Select ref={currencyRef} required>
-                                        <option>USD</option>
-                                        <option>EUR</option>
-                                    </Form.Select>
+                                    <Form.Control as='select' ref={currencyRef} required>
+                                        <option value=''>---  Select an Option  ---</option>
+                                        {currenciesOptions}
+                                    </Form.Control>
                                 </Col>
                             </Form.Group>
 
@@ -95,31 +226,19 @@ const Account = () => {
                                 Bank
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Select ref={bankRef} required>
-                                        <option>Banco Agricola</option>
-                                        <option>Banco Azul</option>
-                                        <option>Banco Cuscatlan</option>
-                                        <option>Banco Credomatic</option>
-                                        <option>Banco Promerica</option>
-                                    </Form.Select>
+                                    <Form.Control as='select' ref={bankRef} required>
+                                        <option value=''>---  Select an Option  ---</option>
+                                        {banksOptions}
+                                    </Form.Control>
                                 </Col>
                             </Form.Group>
-
-                            {/* <Form.Group as={Row} className="mb-3" id="date">
-                                <Form.Label column sm="5">
-                                Date
-                                </Form.Label>
-                                <Col sm="5">
-                                    <Form.Control type="date" ref={dateRef} max={new Date().getDate()} required />
-                                </Col>
-                            </Form.Group> */}
 
                             <Form.Group as={Row} className="mb-3" id="amount">
                                 <Form.Label column sm="5">
                                 Initial Balance
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Control type="number" ref={balanceRef} required placeholder="9999.99" />
+                                    <Form.Control type="number" ref={balanceRef} required placeholder="9999.99" step='any'/>
                                 </Col>
                             </Form.Group>
                     </Card.Body>
