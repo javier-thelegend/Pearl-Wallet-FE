@@ -6,6 +6,7 @@ import * as Icon from 'react-bootstrap-icons';
 import Card from 'react-bootstrap/Card';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Alert from 'react-bootstrap/Alert'
 import { useHistory } from 'react-router-dom';
 import AuthContext from '../context/auth-context';
 
@@ -17,11 +18,12 @@ import AccountTable from '../components/accountTable/AccountTable';
 const spanSize = 15;
 
 const Account = () => {
+    const [error, setError] = useState('')
     const authContext = useContext(AuthContext);
     const history = useHistory()
 
     const handleLoadPage = (e) => {
-        if(e.target.value == '/account/new') localStorage.removeItem("account");
+        if(e.target.value == '/account/new') localStorage.clear();
         history.push(e.target.value);
     }
 
@@ -29,10 +31,27 @@ const Account = () => {
         history.push(e.target.value);
     }
 
-    const handleDeleteAccount = (e) => {
+    const handleDeleteAccount = async (e) => {
         let c = window.confirm("Do you want to delete this account?");
         if(c){
-            alert("Deleted");
+            let idToken = await authContext.currentUser.getIdToken();
+            let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/account/${userAccounts[accountIndex].account}`, {
+                method: 'DELETE',
+                headers: {
+                  'Authorization': `Bearer ${idToken}`
+                }
+            });
+            
+            let result = await response.json();
+            if(!result.valid){
+                setError("Error: " + result.message.column + " " + result.message.detail);
+                setShow(true);
+            } else {
+                //Reload the page instead of remove account from userAccounts
+                localStorage.clear();
+                window.location.reload();
+            }
+            // console.log(result);
         }
     }
 
@@ -42,12 +61,16 @@ const Account = () => {
          const getUserAccounts = async () => {
              const idToken = await authContext.currentUser.getIdToken();
              let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/${authContext.currentUser.uid}/accounts`, {
-                 method: 'GET',
-                 headers: {
-                     'Authorization': `Bearer ${idToken}`
-                 }
-                 });
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${idToken}`
+                    }
+                });
              let userAccounts = await response.json();
+             //Go to create account if there is no account for user
+             if(userAccounts.data.length == 0){
+                 history.push("/account/new");
+             }
              setUserAccounts(userAccounts.data);
          }
          getUserAccounts();
@@ -109,6 +132,8 @@ const Account = () => {
     const setToLocalStorage = (userAccount) => {
         localStorage.setItem("account", userAccount.account);
         localStorage.setItem("balance", userAccount.balance);
+        localStorage.setItem("currency", userAccount.currency);
+        localStorage.setItem("currency_id", userAccount.currency_id);
     }
 
     //Set index to account stored in localStorage
@@ -121,7 +146,7 @@ const Account = () => {
                 for(let a = 0 ; a < userAccounts.length ; a++){
                     if(userAccounts[a].account == account && accountIndex != a){
                         setAccountIndex(a);
-                        setIndex(a);                        
+                        setIndex(a); 
                     }
                 }
             } else {
@@ -129,6 +154,14 @@ const Account = () => {
             }
         }
     }, [userAccounts, accountIndex]);
+
+    //Hook to show/hide alert success/error
+    const [show, setShow] = useState(false);
+    useEffect(() => {
+        setTimeout(function (){
+            setShow(false);
+        },2000);
+    }, [error])
 
     return (
         <Container className="main">
@@ -151,6 +184,9 @@ const Account = () => {
                         onClick={handleNextIndex} disabled={disableNext}>
                         <Icon.ArrowRight color='white' size={spanSize}/>
                     </Button>
+
+                    {/* Show error if exists */}
+                    {error && <Alert variant="danger" show={show} style={{textAlign: 'center'}}>{error}</Alert>}
                     
                     {/* Card Account Presentation */}
                     <Card className="account-card">

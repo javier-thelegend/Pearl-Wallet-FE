@@ -13,7 +13,6 @@ const Menu = () => {
         <nav className={MenuCss.nav}>
             <ul className={MenuCss.ul}>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[0]}}>
-                    {/* Link used to Redirect Pages */}
                     <Link to="/" className={MenuCss.a} style={{color: colorList[0]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
                             <Icon.Wallet2 color={colorList[0]} size={spanSize}/> Dashboard
@@ -21,7 +20,6 @@ const Menu = () => {
                     </Link>
                 </li>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[1]}}>
-                    {/* Link used to Redirect Pages */}
                     <Link to="/transfer" className={MenuCss.a} style={{color: colorList[1]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
                             <Icon.Laptop color={colorList[1]} size={spanSize}/> Transfers
@@ -29,7 +27,6 @@ const Menu = () => {
                     </Link>
                 </li>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[2]}}>
-                    {/* Link used to Redirect Pages */}
                     <Link to="/transaction" className={MenuCss.a} style={{color: colorList[2]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
                             <Icon.ArrowDownUp color={colorList[2]} size={spanSize}/> History

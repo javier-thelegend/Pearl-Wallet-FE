@@ -238,7 +238,7 @@ const Account = () => {
                                 Initial Balance
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Control type="number" ref={balanceRef} required placeholder="9999.99" step='any'/>
+                                    <Form.Control type="number" ref={balanceRef} required placeholder="9999.99" step='any' min="0.01"/>
                                 </Col>
                             </Form.Group>
                     </Card.Body>

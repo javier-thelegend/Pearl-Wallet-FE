@@ -46,7 +46,8 @@ const Transaction = () => {
         
         let result = await response.json();
         if(!result.valid){
-            setError("Error: " + result.message.column + " " + result.message.detail);
+            // setError("Error: " + result.message.column + " " + result.message.detail);
+            throw new Error("Error: " + result.message.column + " " + result.message.detail);
         } else {
             setSuccess(result.message);
         }
@@ -68,7 +69,7 @@ const Transaction = () => {
         
         let result = await response.json();
         if(!result.valid){
-            setError("Error: " + result.message.column + " " + result.message.detail);
+            throw new Error("Error: " + result.message.column + " " + result.message.detail);
         }
         setShow(true);
         // console.log(result);
@@ -92,9 +93,10 @@ const Transaction = () => {
                 category: categoryRef.current.value,
                 account: accountRef.current.value,
                 amount: amountRef.current.value,
-                reason: 'null',
+                reason: null,
                 balance: newBalance,
-                created_at: dateRef.current.value
+                created_at: dateRef.current.value,
+                transfer_account: null,
             };
             await createTransaction(requestBody);
             
@@ -205,13 +207,6 @@ const Transaction = () => {
                                 </Form.Label>
                                 <Col sm="5">
                                     {account && <Form.Control type="text" ref={accountRef} value={account} disabled required />}
-                                    {!account && 
-                                        <Form.Select ref={accountRef} required>
-                                            <option>1000023654</option>
-                                            <option>1077845522</option>
-                                            <option>0000245587</option>
-                                        </Form.Select>
-                                    }
                                 </Col>
                             </Form.Group>
 
@@ -250,7 +245,7 @@ const Transaction = () => {
                                 Amount
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Control type="number" ref={amountRef} required placeholder="9999.99" step='any' />
+                                    <Form.Control type="number" ref={amountRef} required placeholder="9999.99" step='any' min="0.01"/>
                                 </Col>
                             </Form.Group>
                     </Card.Body>
