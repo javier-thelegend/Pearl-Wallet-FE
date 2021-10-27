@@ -27,6 +27,20 @@ const Account = () => {
     const bankRef = useRef()
     const balanceRef = useRef()
     const currencyRef = useRef()
+    const typeRef = useRef()
+
+    //Get Account for Edition
+    const getAccount = async () => {
+        let idToken = await authContext.currentUser.getIdToken();
+        let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/account/${account}`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${idToken}`
+            }
+        });
+        let acc = await response.json();
+        return acc;
+    }
 
     //Function to generate request
     const createAccount = async (requestBody) => {
@@ -34,6 +48,29 @@ const Account = () => {
         let idToken = await authContext.currentUser.getIdToken();
         let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/account`, {
             method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        let result = await response.json();
+        if(!result.valid){
+            setError("Error: " + result.message.column + " " + result.message.detail);
+        } else {
+            setSuccess(result.message);
+        }
+        setShow(true);
+        // console.log(result);
+    }
+
+    //Update/Edit Account
+    const updateAccount = async (requestBody) => {
+        // console.log('requestBody: ' + JSON.stringify(requestBody));
+        let idToken = await authContext.currentUser.getIdToken();
+        let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/account/${account}`, {
+            method: 'PATCH',
             headers: {
               'Authorization': `Bearer ${idToken}`,
               'Content-Type': 'application/json'
@@ -66,14 +103,24 @@ const Account = () => {
 
         //Send request to create account
         try{
-            let requestBody = {
-                account: accountRef.current.value,
-                accountType: accountType,
-                balance: balanceRef.current.value,
-                currency: currencyRef.current.value,
-                bank: bankRef.current.value
-            };
-            await createAccount(requestBody);
+            let requestBody = {};
+            if(!account) {
+                requestBody = {
+                    account: accountRef.current.value,
+                    accountType: accountType,
+                    balance: balanceRef.current.value,
+                    currency: currencyRef.current.value,
+                    bank: bankRef.current.value
+                };
+                await createAccount(requestBody);
+            } else {
+                requestBody = {
+                    accountType: accountType,
+                    currency: currencyRef.current.value,
+                    bank: bankRef.current.value
+                };
+                await updateAccount(requestBody);
+            }
         }catch(e){
             setError(e);
             setShow(true);
@@ -84,19 +131,22 @@ const Account = () => {
 
         //Clean variables
         // setAccountType(); //Trigger error intentionally 2nd creation
-        accountRef.current.value = '';
-        currencyRef.current.value = '';
-        bankRef.current.value = '';
-        balanceRef.current.value = '';
+        if(!account) {
+            accountRef.current.value = '';
+            currencyRef.current.value = '';
+            bankRef.current.value = '';
+            balanceRef.current.value = '';
+        }
     }
 
     const handleCancel = () => {
-        localStorage.removeItem("account")
         history.goBack()
     }
 
-    //To Get AccountType Value
+    //To Get AccountType, Currency and Bank Value
     const [accountType, setAccountType] = useState();
+    const [currency, setCurrency] = useState();
+    const [bank, setBank] = useState();
 
     //Fill Account Type RadioButton Options
     const accountTypesCatalogId = 1;
@@ -116,12 +166,25 @@ const Account = () => {
         }
         getAccountTypes();
     }, []);
-    const accountTypesOptions = accountTypes.map((rb) => (
-        <Form.Check inline type='radio'>
-            <Form.Check.Input type='radio' name='type' required onChange={() => setAccountType(rb.id)}/>
+    
+    //Update Account Form in case is an Edition
+    useEffect(async () => {
+        if(account){
+            const acc = await getAccount();
+            balanceRef.current.value = acc.data[0].balance;
+            setCurrency(acc.data[0].currency);
+            setBank(acc.data[0].bank);
+            setAccountType(acc.data[0].account_type);
+        }
+    }, []);
+    const accountTypesOptions = accountTypes.map((rb) => {
+        return <Form.Check inline type='radio'>
+            <Form.Check.Input type='radio' name='type' ref={typeRef} required 
+                                onChange={() => setAccountType(rb.id)}
+                                checked={accountType == rb.id}/>
             <Form.Check.Label>&nbsp;{rb.description}</Form.Check.Label>
         </Form.Check>
-    ));
+    });
 
     //Fill Currency Dropdown Options
     const [currencies, setCurrencies] = useState([]);
@@ -140,7 +203,10 @@ const Account = () => {
         }
         getCurrencies();
     }, []);
-    const currenciesOptions = currencies.map((option) => <option key={option.id} value={option.id}>{option.iso_code}</option>);
+    const currenciesOptions = currencies.map((option) => 
+                                <option key={option.id} value={option.id} selected={option.id == currency}>
+                                    {option.iso_code}
+                                </option>);
 
     //Fill Bank Dropdown Options
     const bankCatalogId = 4;
@@ -160,7 +226,10 @@ const Account = () => {
         }
         getBanks();
     }, []);
-    const banksOptions = banks.map((option) => <option key={option.id} value={option.id}>{option.description}</option>);
+    const banksOptions = banks.map((option) => 
+                            <option key={option.id} value={option.id} selected={option.id == bank}>
+                                {option.description}
+                            </option>);
 
     //Hook to show/hide alert success/error
     const [show, setShow] = useState(false);
@@ -168,7 +237,7 @@ const Account = () => {
         setTimeout(function (){
             setShow(false);
         },5000);
-    }, [error, success])
+    }, [error, success]);
 
     return (
         <Container className="main">
@@ -238,7 +307,8 @@ const Account = () => {
                                 Initial Balance
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Control type="number" ref={balanceRef} required placeholder="9999.99" step='any' min="0.01"/>
+                                    {account && <Form.Control type="number" ref={balanceRef} disabled required />}
+                                    {!account && <Form.Control type="number" ref={balanceRef} required placeholder="9999.99" step='any' min="0.01"/>}
                                 </Col>
                             </Form.Group>
                     </Card.Body>

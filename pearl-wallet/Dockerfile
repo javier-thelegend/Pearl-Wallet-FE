@@ -14,6 +14,11 @@ WORKDIR /app
 COPY . /app
 
 #Firebase variables are moved in .env.local
+ENV REACT_APP_FIREBASE_API_KEY=AIzaSyCcVRAXubcBkUwltBuf-kxwIIq2FdtyRm0
+ENV REACT_APP_FIREBASE_AUTH_DOMAIN=pearl-wallet-project.firebaseapp.com
+ENV REACT_APP_FIREBASE_PROJECT_ID=pearl-wallet-project
+ENV REACT_APP_FIREBASE_APP_ID=1:335196229907:web:2084f0fc3053906aea0ae6
+ENV REACT_APP_BACKEND_BASE_URL=http://localhost:3800
 
 #Install Node
 RUN npm install

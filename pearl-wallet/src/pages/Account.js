@@ -21,6 +21,7 @@ const Account = () => {
     const [error, setError] = useState('')
     const authContext = useContext(AuthContext);
     const history = useHistory()
+    // console.log(authContext.currentUser.accessToken);
 
     const handleLoadPage = (e) => {
         if(e.target.value == '/account/new') localStorage.clear();
