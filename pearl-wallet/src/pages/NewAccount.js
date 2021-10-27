@@ -57,11 +57,11 @@ const Account = () => {
         
         let result = await response.json();
         if(!result.valid){
-            setError("Error: " + result.message.column + " " + result.message.detail);
+            throw new Error("Error: " + result.message.column + " " + result.message.detail);
         } else {
             setSuccess(result.message);
         }
-        setShow(true);
+        // setShow(true);
         // console.log(result);
     }
 
@@ -80,7 +80,30 @@ const Account = () => {
         
         let result = await response.json();
         if(!result.valid){
-            setError("Error: " + result.message.column + " " + result.message.detail);
+            throw new Error("Error: " + result.message.column + " " + result.message.detail);
+        } else {
+            setSuccess(result.message);
+        }
+        setShow(true);
+        // console.log(result);
+    }
+
+    const createTransaction = async (requestBody) => {
+        // console.log('requestBody: ' + JSON.stringify(requestBody));
+        let idToken = await authContext.currentUser.getIdToken();
+        let response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/transaction`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${idToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestBody)
+        });
+        
+        let result = await response.json();
+        if(!result.valid){
+            // setError("Error: " + result.message.column + " " + result.message.detail);
+            throw new Error("Error: " + result.message.column + " " + result.message.detail);
         } else {
             setSuccess(result.message);
         }
@@ -113,6 +136,20 @@ const Account = () => {
                     bank: bankRef.current.value
                 };
                 await createAccount(requestBody);
+
+                //Create Record for Account Opening Transaction
+                let today = new Date();
+                requestBody = {
+                    transaction_type: 14,
+                    category: 36,
+                    account: accountRef.current.value,
+                    amount: balanceRef.current.value,
+                    reason: null,
+                    balance: balanceRef.current.value,
+                    created_at: today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate(),
+                    transfer_account: null,
+                };
+                await createTransaction(requestBody);
             } else {
                 requestBody = {
                     accountType: accountType,
