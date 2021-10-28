@@ -26,7 +26,9 @@ RUN npm install
 #Create build (compiled version)
 RUN npm run build
 
-#FROM nginx
+#FROM nginx:1.21.3
+
+#COPY --from=compilacion /app/build /usr/share/nginx/html
 
 #Port to use
 EXPOSE 3000

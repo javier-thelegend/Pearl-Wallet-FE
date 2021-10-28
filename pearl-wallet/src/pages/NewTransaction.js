@@ -13,7 +13,6 @@ import Col from 'react-bootstrap/Col'
 import Alert from 'react-bootstrap/Alert'
 
 import '../components/main/Main.css'
-import './Transaction.css'
 
 const Transaction = () => {
     const [error, setError] = useState('')

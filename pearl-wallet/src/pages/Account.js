@@ -221,7 +221,8 @@ const Account = () => {
 
                 <Col sm={8}>
                     {/* Add Movements Table */}
-                    <AccountTable account={userAccounts[accountIndex].account} />
+                    {localStorage.getItem("account") && <AccountTable account={localStorage.getItem("account")} />}
+                    {!localStorage.getItem("account") && <AccountTable account={userAccounts[accountIndex].account} />}
                 </Col>
             </Row>
         </Container>
