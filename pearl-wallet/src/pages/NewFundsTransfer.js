@@ -203,7 +203,7 @@ const NewFundsTransfer = () => {
 
     return (
         <Container className="main">
-            <Card className="account-card transaction-card">
+            <Card className="account-card form-card">
 
                 {/* Creating the form */}
                 <Form onSubmit={handleSubmit}>

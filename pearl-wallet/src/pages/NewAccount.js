@@ -13,6 +13,7 @@ import Col from 'react-bootstrap/Col'
 import Alert from 'react-bootstrap/Alert'
 
 import '../components/main/Main.css'
+import './NewAccount.css'
 
 const Account = () => {
     const [error, setError] = useState('')
@@ -278,7 +279,7 @@ const Account = () => {
 
     return (
         <Container className="main">
-            <Card className="account-card transaction-card">
+            <Card className="account-card form-card">
 
                 {/* Creating the form */}
                 <Form onSubmit={handleSubmit}>
