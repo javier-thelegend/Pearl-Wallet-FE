@@ -2,18 +2,16 @@ import { useTable, useSortBy } from "react-table";
 import { useGlobalFilter, useAsyncDebounce } from "react-table";
 import { usePagination } from "react-table";
 import { useState } from "react";
-import { useHistory } from 'react-router-dom'
 import * as Icon from 'react-bootstrap-icons';
-import Button from 'react-bootstrap/Button';
 
 import AccountTableCss from '../accountTable/AccountTable.module.css';
-import useColumns from "../../hooks/useFundsTransferColumns";
-import useRows from "../../hooks/useFundsTransferRows";
+import useColumns from "../../hooks/useCurrencyColumns";
+import useRows from "../../hooks/useCurrencyRows";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 
-function FundsTransferFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
+function CurrencyFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
   const totalMovements = preGlobalFilteredRows.length;
   const [value, setValue] = useState(globalFilter);
 
@@ -34,14 +32,14 @@ function FundsTransferFilter({ preGlobalFilteredRows, globalFilter, setGlobalFil
         size={40}
         value={value || ""}
         onChange={handleInputChange}
-        placeholder={`${totalMovements} Funds Transfer Movementes`}
+        placeholder={`${totalMovements} Currencies`}
         style={{marginRight: '1%'}}
       />
     </span>
   );
 }
 
-export default function FundsTransferTable() {
+export default function CurrencyTable({rowClickEvent}) {
   const columns = useColumns();
   const data = useRows();
   const table = useTable({
@@ -51,7 +49,7 @@ export default function FundsTransferTable() {
         pageSize: 10,
         pageIndex: 0
       }
-    }, 
+    },
     useGlobalFilter,  
     useSortBy,
     usePagination
@@ -76,81 +74,72 @@ export default function FundsTransferTable() {
     state: { globalFilter, pageIndex, pageSize }
   } = table;
 
-  const history = useHistory()
-  const handleNewIncomeExpenses = () => {
-    history.push('/transfer/new')
-  }
-
   return (
     <>
       {/* Apply the table props */}
-      <table {...getTableProps()}>
-        <thead>
-        <tr>
-            <th className={AccountTableCss.filter} colSpan={5}>
-              <Row>
-                <Col style={{textAlign: 'left'}}>
-                  <Button style={{marginTop: '-5px'}} className="button-new-in-filter" variant="default" title='Add a New Funds Transfer' onClick={handleNewIncomeExpenses}>
-                      <Icon.FileEarmark color='black' size={15}/> New Funds Transfer
-                  </Button>
-                </Col>
-                <Col>
-                  <FundsTransferFilter
-                      preGlobalFilteredRows={preGlobalFilteredRows}
-                      globalFilter={globalFilter}
-                      setGlobalFilter={setGlobalFilter}
-                  />
-                </Col>
-              </Row>
-            </th>
-          </tr>
-
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()}>
-              {headerGroup.headers.map((column) => (
-                // Aplicamos las propiedades de ordenación a cada columna
-                <th
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
-                  className={
-                    column.isSorted ? column.isSortedDesc ? "desc" : "asc" : ""
-                  }
-                >
-                  {column.render("Header")}
-                </th>
-              ))}
+        <table {...getTableProps()}>
+          <thead>
+            <tr>
+              <th className={AccountTableCss.filter} colSpan={5}>
+                <Row>
+                  <Col>
+                    <CurrencyFilter
+                        preGlobalFilteredRows={preGlobalFilteredRows}
+                        globalFilter={globalFilter}
+                        setGlobalFilter={setGlobalFilter}
+                    />
+                  </Col>
+                </Row>
+              </th>
             </tr>
-          ))}
-        </thead>
-        {/* Apply the table body props */}
-        <tbody {...getTableBodyProps()}>
-          {
-            // Loop over the table rows
-            page.map((row) => {
-              // Prepare the row for display
-              prepareRow(row);
-              return (
-                // Apply the row props
-                <tr {...row.getRowProps()}>
-                  {
-                    // Loop over the rows cells
-                    row.cells.map((cell) => {
-                      // Apply the cell props
-                      return (
-                        <td {...cell.getCellProps()}>
-                          {
-                            // Render the cell contents
-                            cell.render("Cell")
-                          }
-                        </td>
-                      );
-                    })
-                  }
-                </tr>
-              );
-            })
-          }
-        </tbody>
-      </table>  
+
+            {headerGroups.map((headerGroup) => (
+              <tr {...headerGroup.getHeaderGroupProps()}>
+                {headerGroup.headers.map((column) => (
+                  // Aplicamos las propiedades de ordenación a cada columna
+                  <th
+                    {...column.getHeaderProps(column.getSortByToggleProps())}
+                    className={
+                      column.isSorted ? column.isSortedDesc ? "desc" : "asc" : ""
+                    }
+                  >
+                    {column.render("Header")}
+                  </th>
+                ))}
+              </tr>
+            ))}
+          </thead>
+
+          {/* Apply the table body props */}
+          <tbody {...getTableBodyProps()}>
+            {
+              // Loop over the table rows
+              page.map((row) => {
+                // Prepare the row for display
+                prepareRow(row);
+                return (
+                  // Apply the row props
+                  <tr {...row.getRowProps()} onClick={rowClickEvent} id={row.values.id} name={'(' + row.values.iso_code + ') ' + row.values.description}>
+                    {
+                      // Loop over the rows cells
+                      row.cells.map((cell) => {
+                        // Apply the cell props
+                        return (
+                          <td {...cell.getCellProps()}>
+                            {
+                              // Render the cell contents
+                              cell.render("Cell")
+                            }
+                          </td>
+                        );
+                      })
+                    }
+                  </tr>
+                );
+              })
+            }
+          </tbody>
+        </table>
 
         <Container className={AccountTableCss.pagination}>
           <Row>
