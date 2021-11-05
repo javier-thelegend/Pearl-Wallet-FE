@@ -171,7 +171,7 @@ const Account = () => {
                     {/* Add New Account */}
                     <Button className="account-button account-button-new" variant="primary" title='Add a New Account' 
                         onClick={handleLoadPage} value='/account/new'>
-                        <Icon.FileEarmark color='white' size={spanSize}/> New Account
+                        <Icon.FileEarmarkFill color='white' size={spanSize}/> New Account
                     </Button>
 
                     {/* Previous Account */}

@@ -20,16 +20,16 @@ const Menu = () => {
                     </Link>
                 </li>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[1]}}>
-                    <Link to="/currency" className={MenuCss.a} style={{color: colorList[1]}}>
+                    <Link to="/history" className={MenuCss.a} style={{color: colorList[1]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
-                            <Icon.CurrencyExchange color={colorList[1]} size={spanSize}/> Currency &amp; Exchanges
+                            <Icon.Stack color={colorList[1]} size={spanSize}/> History
                         </span>
                     </Link>
                 </li>
                 <li className={MenuCss.li} style={{backgroundColor: colorList[2]}}>
-                    <Link to="/history" className={MenuCss.a} style={{color: colorList[2]}}>
+                    <Link to="/currency" className={MenuCss.a} style={{color: colorList[2]}}>
                         <span className={MenuCss.span} style={spanBgColor}>
-                            <Icon.Stack color={colorList[2]} size={spanSize}/> History
+                            <Icon.CurrencyExchange color={colorList[2]} size={spanSize}/> Currency &amp; Exchanges
                         </span>
                     </Link>
                 </li>

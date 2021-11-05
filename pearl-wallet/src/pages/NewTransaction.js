@@ -235,7 +235,7 @@ const Transaction = () => {
                                 Date
                                 </Form.Label>
                                 <Col sm="5">
-                                    <Form.Control type="date" ref={dateRef} max={today.getFullYear() + '-' + (today.getMonth()+1) + '-' + today.getDate()} required />
+                                    <Form.Control type="date" ref={dateRef} max={today.getFullYear() + '-' + (today.getMonth()+1) + '-' + (today.getDate() < 10 ? '0'+today.getDate() : today.getDate())} required />
                                 </Col>
                             </Form.Group>
 

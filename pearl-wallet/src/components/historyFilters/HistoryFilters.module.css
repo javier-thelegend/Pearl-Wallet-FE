@@ -1,0 +1,8 @@
+.formLabel{
+    text-align: center;
+    display: block;
+}
+
+.formControl{
+    padding-right: 3px;
+}

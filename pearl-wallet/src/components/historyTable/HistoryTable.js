@@ -5,13 +5,13 @@ import { useState } from "react";
 import * as Icon from 'react-bootstrap-icons';
 
 import AccountTableCss from '../accountTable/AccountTable.module.css';
-import useColumns from "../../hooks/useCurrencyColumns";
-import useRows from "../../hooks/useCurrencyRows";
+import useColumns from "../../hooks/useAccountColumns";
+import useRows from "../../hooks/useHistoryRows";
 import Container from "react-bootstrap/esm/Container";
 import Row from "react-bootstrap/esm/Row";
 import Col from "react-bootstrap/esm/Col";
 
-function CurrencyFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
+function HistoryFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }) {
   const totalMovements = preGlobalFilteredRows.length;
   const [value, setValue] = useState(globalFilter);
 
@@ -32,16 +32,17 @@ function CurrencyFilter({ preGlobalFilteredRows, globalFilter, setGlobalFilter }
         size={40}
         value={value || ""}
         onChange={handleInputChange}
-        placeholder={`${totalMovements} Currencies`}
+        placeholder={`${totalMovements} Movements`}
         style={{marginRight: '1%'}}
       />
     </span>
   );
 }
 
-export default function CurrencyTable({rowClickEvent}) {
+//Getting props and passing the to useRows hook
+export default function HistoryTable(props) {
   const columns = useColumns();
-  const data = useRows();
+  const data = useRows(props);
   const table = useTable({
       columns, 
       data, 
@@ -83,7 +84,7 @@ export default function CurrencyTable({rowClickEvent}) {
               <th className={AccountTableCss.filter} colSpan={5}>
                 <Row>
                   <Col>
-                    <CurrencyFilter
+                    <HistoryFilter
                         preGlobalFilteredRows={preGlobalFilteredRows}
                         globalFilter={globalFilter}
                         setGlobalFilter={setGlobalFilter}
@@ -119,10 +120,7 @@ export default function CurrencyTable({rowClickEvent}) {
                 prepareRow(row);
                 return (
                   // Apply the row props
-                  <tr {...row.getRowProps()} onClick={rowClickEvent} 
-                                              id={row.values.id} 
-                                              name={'(' + row.values.iso_code + ') ' + row.values.description}
-                                              title="Click to See Exchanges">
+                  <tr {...row.getRowProps()}>
                     {
                       // Loop over the rows cells
                       row.cells.map((cell) => {

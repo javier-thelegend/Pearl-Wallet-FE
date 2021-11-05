@@ -342,7 +342,7 @@ const Account = () => {
 
                             <Form.Group as={Row} className="mb-3" id="amount">
                                 <Form.Label column sm="5">
-                                Initial Balance
+                                    Balance
                                 </Form.Label>
                                 <Col sm="5">
                                     {account && <Form.Control type="number" ref={balanceRef} disabled required />}

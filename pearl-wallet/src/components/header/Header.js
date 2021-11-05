@@ -45,7 +45,7 @@ const Header = (props) => {
                             Signed in as:
                         </Navbar.Text>
                         <NavDropdown title={authContext.currentUser.email} id="basic-nav-dropdown">
-                            <NavDropdown.Item onClick={HandlerLogOut}><DoorOpen size={14}/> Log Out</NavDropdown.Item>
+                            <NavDropdown.Item style={{width: "auto"}} onClick={HandlerLogOut}><DoorOpen size={14}/> Log Out</NavDropdown.Item>
                         </NavDropdown>
                     </Navbar.Collapse>
                 </Container>
