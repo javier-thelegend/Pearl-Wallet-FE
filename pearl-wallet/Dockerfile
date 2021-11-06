@@ -2,10 +2,10 @@
 #docker build -t pearl-wallet-fe:0.1.0 -f Dockerfile .
 
 #RUN
-#docker run -p 3000:3000 -d pearl-wallet-fe:0.1.0
+#docker run -p 80:80 -d pearl-wallet-fe:0.1.0
 
 #node --version
-FROM node:14.17.6 
+FROM node:14.17.6 as compilacion
 
 #Workdir
 WORKDIR /app
@@ -26,12 +26,14 @@ RUN npm install
 #Create build (compiled version)
 RUN npm run build
 
-#FROM nginx:1.21.3
+#Use nginx
+FROM nginx:1.21.3
 
-#COPY --from=compilacion /app/build /usr/share/nginx/html
+#Pass compilacion to nginx directory
+COPY --from=compilacion /app/build /usr/share/nginx/html
 
 #Port to use
-EXPOSE 3000
+#EXPOSE 3000
 
 #Run App
-CMD [ "npm", "start"]
+#CMD [ "npm", "start"]
