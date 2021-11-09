@@ -70,6 +70,31 @@ const HistoryFilters = (props) => {
         //Stop default implementation of event
         e.preventDefault();
 
+        //Get Form
+        let form = document.querySelector("form");
+
+        //Validate input forms as event is not submit
+        if(form.reportValidity()){
+            //Prepare params to return
+            const params = {
+                account: accountRef.current.value,
+                fromDate: fromDateRef.current.value,
+                toDate: toDateRef.current.value,
+                category: categoryRef.current.value
+            }
+
+            //Send data to parent component through function passed as property
+            props.onSearchClick(params);
+        }
+    }
+
+    const handleClean = (e) => {
+        //Cleaning fields
+        accountRef.current.value = "";
+        fromDateRef.current.value = "";
+        toDateRef.current.value = "";
+        categoryRef.current.value = "";
+
         //Prepare params to return
         const params = {
             account: accountRef.current.value,
@@ -80,17 +105,6 @@ const HistoryFilters = (props) => {
 
         //Send data to parent component through function passed as property
         props.onSearchClick(params);
-    }
-
-    const handleClean = (e) => {
-        //Cleaning fields
-        accountRef.current.value = "";
-        fromDateRef.current.value = "";
-        toDateRef.current.value = "";
-        categoryRef.current.value = "";
-
-        //Submit filters
-        handleSubmit(e);
     }
 
     return (
@@ -144,13 +158,13 @@ const HistoryFilters = (props) => {
                                 <Button className="account-link-button"  
                                     variant="primary"
                                     onClick={handleSubmit}
-                                    type="submit">
+                                    type="button">
                                     <Icon.BinocularsFill color='white' size={16}/> Search
                                 </Button>
                                 <Button className="account-link-button"  
                                     variant="primary"
                                     onClick={handleClean}
-                                    type="submit">
+                                    type="button">
                                     <Icon.FunnelFill color='white' size={16}/> Clear
                                 </Button>
                             </Col>
